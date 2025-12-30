@@ -1,20 +1,52 @@
-# traceme
+# TraceMe
 
-## App Demo Video
+**TraceMe** is a mobile application designed to help locate missing people using advanced facial recognition and real-time alerts. It leverages **Supabase** for secure backend and database management.
+
+---
+
+## 📹 App Demo Video
 
 [▶ Watch Demo Video](https://drive.google.com/file/d/1eOhKKdUKlA4-Tx6cnWX0Kbk0jVXeNoYJ/view?usp=sharing)
 
-A new Flutter project.
+---
 
-## Getting Started
+## 🚀 About the Project
 
-This project is a starting point for a Flutter application.
+TraceMe uses AI-driven facial recognition to match images of missing persons with real-time feeds from social media, public cameras, and user uploads. The app sends alerts to authorities or family members when a potential match is found.
 
-A few resources to get you started if this is your first Flutter project:
+Key functionalities include:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Secure database of missing persons’ profiles (Supabase)
+- AI-based image matching and recognition
+- Real-time notifications and location tracking
+- SOS alerts for emergencies
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 📌 Features
+
+- Upload images of missing persons
+- AI-driven facial recognition matching
+- Real-time notifications for potential matches
+- Location tracking for immediate response
+- Guardian and authority user interfaces
+- Secure authentication and storage via Supabase
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Flutter (Dart)
+- **Backend / Database:** Supabase (PostgreSQL)
+- **AI/ML:** Facial recognition using ViT/MTCNN models
+- **Storage:** Supabase Storage for images
+- **Notifications:** Firebase Cloud Messaging (optional)
+
+---
+
+## ⚙️ Getting Started
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/TraceMe.git
