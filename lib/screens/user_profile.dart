@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'sign_in.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,25 +16,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final SupabaseClient supabase = Supabase.instance.client;
   final user = Supabase.instance.client.auth.currentUser;
 
-  // Controllers
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
 
-  String? imagePath; // Local file path
-  String? onlineImageUrl; // To load saved image
+  String? imagePath;
+  String? onlineImageUrl;
+  String userName = "";
 
   @override
   void initState() {
     super.initState();
-    fetchUserProfile(); // Load saved data
+    fetchUserProfile();
   }
 
   Future<void> fetchUserProfile() async {
     if (user == null) return;
 
     final response = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select()
         .eq('id', user!.id)
         .maybeSingle();
@@ -43,62 +44,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
       phoneController.text = response['phone'] ?? "";
       addressController.text = response['address'] ?? "";
       onlineImageUrl = response['image_url'];
+      userName = response['name'] ?? "User";
       setState(() {});
     }
   }
 
   Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-
-    if (picked != null) {
-      setState(() => imagePath = picked.path);
-    }
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null) setState(() => imagePath = picked.path);
   }
 
   Future<String?> uploadImageToSupabase() async {
     if (imagePath == null) return onlineImageUrl;
 
-    try {
-      final file = File(imagePath!);
-      final fileName = "${user!.id}.jpg";
+    final file = File(imagePath!);
+    final fileName = "${user!.id}.jpg";
 
-      // Upload to Supabase Storage
-      await supabase.storage.from('profile_pics').upload(
-        fileName,
-        file,
-        fileOptions: const FileOptions(upsert: true),
-      );
+    await supabase.storage.from('profile_pics').upload(
+      fileName,
+      file,
+      fileOptions: const FileOptions(upsert: true),
+    );
 
-      // Get image URL
-      final publicUrl = supabase.storage
-          .from('profile_pics')
-          .getPublicUrl(fileName);
-
-      return publicUrl;
-    } catch (e) {
-      print("Image upload error: $e");
-      return null;
-    }
+    return supabase.storage.from('profile_pics').getPublicUrl(fileName);
   }
 
   Future<void> saveProfile() async {
     final imageUrl = await uploadImageToSupabase();
 
-    await supabase.from('profiles').upsert({
+    await supabase.from('user_profiles').upsert({
       'id': user!.id,
-      'email': user!.email,
       'name': nameController.text,
       'phone': phoneController.text,
       'address': addressController.text,
       'image_url': imageUrl,
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Details saved successfully")),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Details saved successfully")));
 
-    fetchUserProfile(); // Reload saved data
+    fetchUserProfile();
   }
 
   @override
@@ -117,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget frostedGlassLayout() {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(12),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
         child: BackdropFilter(
@@ -143,7 +128,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             const SizedBox(height: 20),
 
-            // Profile Circle
             GestureDetector(
               onTap: pickImage,
               child: CircleAvatar(
@@ -153,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? FileImage(File(imagePath!))
                     : (onlineImageUrl != null
                     ? NetworkImage(onlineImageUrl!)
-                    : null) as ImageProvider?,
+                    : null),
                 child: (imagePath == null && onlineImageUrl == null)
                     ? const Icon(Icons.person, color: Colors.white, size: 80)
                     : null,
@@ -162,11 +146,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 25),
 
-            // Email
             Text(
-              user?.email ?? "No Email",
+              "Hey, $userName 👋",
               style: const TextStyle(
-                  color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 25),
@@ -197,9 +182,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               onPressed: () async {
                 await supabase.auth.signOut();
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SignInScreen()),
+                );
               },
-              child: const Text("Sign Out", style: TextStyle(color: Colors.white70)),
+              child:
+              const Text("Sign Out", style: TextStyle(color: Colors.white70)),
             ),
           ],
         ),

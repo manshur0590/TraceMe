@@ -3,22 +3,30 @@ description: App to help find missing or speech-impaired persons
 publish_to: "none"
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.10.7 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  # 👇 Supabase (Auth + Storage + Database)
   supabase_flutter: ^2.5.9
-
-  # 👇 For image upload & HTTP requests
   image_picker: ^1.1.2
-  http: ^1.1.0
+  http: ^1.2.0
+  tflite_flutter: ^0.11.0
+  image: ^4.1.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app.png"
+  adaptive_icon_background: "assets/images/backgroung.png"
+  adaptive_icon_foreground: "assets/images/app.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
@@ -26,3 +34,12 @@ flutter:
   assets:
     - assets/images/bg.jpg
     - assets/images/bg_index.jpg
+    - assets/images/app.png
+    - assets/images/backgroung.png
+    - assets/images/f1.jpeg
+    - assets/images/f2.jpeg
+    - assets/images/f4.jpeg
+    - assets/images/f5.jpeg
+    - assets/images/f3.png
+    - assets/images/f3.jpeg
+
